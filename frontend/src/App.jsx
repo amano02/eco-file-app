@@ -3,12 +3,12 @@ import CardView from './CardView'
 
 function App() {
   return (
-    
-      
-        {/* URLに /card/UUID が来た時に CardView を表示する設定 */}
-        
-      
-    
+    <BrowserRouter>
+      <Routes>
+        {/* ここが <CardView /> とタグの形になっているかが最大のポイントです！ */}
+        <Route path="/card/:id" element={<CardView />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

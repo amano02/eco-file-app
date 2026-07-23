@@ -1,0 +1,257 @@
+/* 画面全体の背景（PC表示用） */
+.page-container {
+  min-height: 100vh;
+  background-color: #f3f4f6; /* 薄いグレー背景 */
+  display: flex;
+  justify-content: center; /* 中央寄せ */
+}
+
+/* 中央のカード（スマホは全幅、PCは最大480px制限） */
+.card-container {
+  width: 100%;
+  max-width: 480px;
+  background-color: #ffffff;
+  min-height: 100vh;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 浮き出し効果 */
+  position: relative;
+}
+
+/* 📍 アクションエリア（固定ヘッダー） */
+.fixed-header {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 10;
+}
+
+.action-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(59,130,246,0.3);
+}
+
+/* コンテンツエリア */
+.content-area {
+  padding: 30px 20px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.company-name {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.employee-name {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: #111827;
+}
+
+.role {
+  font-size: 16px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.section h3 {
+  font-size: 16px;
+  color: #111827;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.contact-link {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 16px;
+  text-decoration: none;
+  color: #3b82f6;
+}
+
+.text-body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4b5563;
+  white-space: pre-wrap; /* 改行を反映 */
+}
+
+/* 📍 アクションエリア（常時固定ヘッダー）の上書き */
+.fixed-header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(5px); /* 背景を少しぼかすお洒落な効果 */
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* ボタンの隙間 */
+  padding: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 10;
+}
+
+.action-btn {
+  flex: 1; /* ボタンを横幅いっぱいに均等配置 */
+  max-width: 200px;
+  background-color: #111827; /* スタイリッシュな黒系 */
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 25px; /* 丸みのあるボタン */
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.1s;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+/* 📍 ドロワー（せり上がりメニュー）のスタイル */
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+.overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.bottom-drawer {
+  position: fixed;
+  bottom: 0;
+  /* PC画面でも中央のカード幅に合わせる設定 */
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  width: 100%;
+  max-width: 480px;
+  background-color: white;
+  border-radius: 20px 20px 0 0;
+  z-index: 50;
+  padding: 25px 20px;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s cubic-bezier(0.1, 0.8, 0.2, 1); /* なめらかな動き */
+}
+.bottom-drawer.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.drawer-title {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 15px 0;
+  font-weight: bold;
+}
+
+.drawer-menu-btn {
+  display: block;
+  width: 100%;
+  background-color: #f3f4f6;
+  color: #111827;
+  border: none;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.drawer-menu-btn span {
+  margin-right: 12px;
+  font-size: 18px;
+}
+.drawer-menu-btn.cancel {
+  background-color: white;
+  color: #ef4444; /* 赤色 */
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+
+/* 📍 自動生成用の名刺テンプレート（画面には表示させない隠し要素） */
+.hidden-card-export {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 910px; /* 日本の名刺規格 91mm に合わせた比率 */
+  height: 550px; /* 55mm に合わせた比率 */
+  background-color: #ffffff;
+  padding: 60px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  color: #111827;
+}
+
+/* 名刺内のレイアウト */
+.export-header {
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 20px;
+}
+.export-company {
+  font-size: 24px;
+  font-weight: bold;
+  color: #374151;
+}
+.export-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.export-role {
+  font-size: 20px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+.export-name {
+  font-size: 52px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin: 0;
+}
+.export-furigana {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+.export-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 18px;
+  line-height: 1.6;
+}
+.export-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
