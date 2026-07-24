@@ -5,3 +5,4 @@ djangorestframework
 gunicorn==26.0.0
 Pillow
 sqlparse==0.5.3
+whitenoise

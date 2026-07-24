@@ -14,7 +14,7 @@ export default function CardView() {
   const exportCardRef = useRef(null)
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/cards/${id}/`)
+    fetch(`https://eco-file-app.onrender.com/api/cards/${id}/`)
       .then(res => {
         if (!res.ok) throw new Error('名刺データが見つかりませんでした')
         return res.json()
