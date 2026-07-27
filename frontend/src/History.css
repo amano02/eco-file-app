@@ -1,0 +1,63 @@
+.history-page-container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 20px;
+  max-width: 480px;
+  margin: 0 auto; /* PC表示でも中央に寄せる */
+}
+
+.history-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-top: 20px;
+}
+
+.history-header h1 {
+  font-size: 22px;
+  color: #111827;
+  margin: 0;
+}
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  padding: 50px 0;
+  font-size: 14px;
+}
+
+/* 一覧画面のカード1枚ずつのデザイン */
+.history-card-item {
+  display: block;
+  background-color: white;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  text-decoration: none; /* リンクの下線を消す */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb;
+  transition: transform 0.1s;
+}
+
+/* タップした時に少し沈み込むアニメーション */
+.history-card-item:active {
+  transform: scale(0.97);
+}
+
+.history-card-company {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.history-card-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.history-card-date {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: right;
+}

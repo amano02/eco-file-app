@@ -255,3 +255,28 @@
   align-items: center;
   gap: 10px;
 }
+
+/* モーダルの背景（画面全体を暗くする） */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* 確実に一番手前に表示する */
+}
+
+/* モーダルの中身（白いボックス） */
+.custom-modal-content {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}

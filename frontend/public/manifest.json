@@ -1,0 +1,15 @@
+{
+  "short_name": "エコ名刺入れ",
+  "name": "デジタル名刺入れコレクション",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/306/306470.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/history",
+  "background_color": "#f3f4f6",
+  "display": "standalone",
+  "theme_color": "#3b82f6"
+}
