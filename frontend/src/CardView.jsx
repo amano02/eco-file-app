@@ -32,9 +32,11 @@ export default function CardView() {
 
   const closeMenu = () => setActiveMenu(null)
 
-  // 💡 LINEに直接送信する関数（ワンタップ保存！）
+  // 💡 LINEに直接送信する関数（ワンタップ保存！＆外部ブラウザ起動対応版）
   const handleSaveToLine = () => {
-    const text = `📇 名刺を交換しました\n\n${company.name}\n${employee.department} ${employee.role}\n${employee.name}\n\n▼名刺データを開く\n${window.location.href}`;
+    // 🔽 window.location.href の直後に ?openExternalBrowser=1 を追加しました
+    const text = `📇 名刺を交換しました\n\n${company.name}\n${employee.department} ${employee.role}\n${employee.name}\n\n▼名刺データを開く\n${window.location.href}?openExternalBrowser=1`;
+    
     const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
     window.open(lineUrl, '_blank', 'noopener,noreferrer');
   }
