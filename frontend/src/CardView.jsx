@@ -39,8 +39,8 @@ export default function CardView() {
     window.open(lineUrl, '_blank', 'noopener,noreferrer');
   }
 
-  // 1. vCard保存
-  const handleDownloadVCard = () => {
+  // 1. vCard保存（ネイティブ連携対応版）
+  const handleDownloadVCard = async () => {
     const vcardLines = [
       "BEGIN:VCARD", "VERSION:3.0",
       `FN:${employee.name}`, `ORG:${company.name}`,
@@ -50,11 +50,35 @@ export default function CardView() {
       company.website_url ? `URL:${company.website_url}` : "",
       "END:VCARD"
     ]
-    const blob = new Blob([vcardLines.filter(Boolean).join('\n')], { type: 'text/vcard;charset=utf-8' })
+    
+    // vcfデータの作成
+    const vcardString = vcardLines.filter(Boolean).join('\n')
+    const fileName = `${employee.name}_連絡先.vcf`
+    
+    // スマホのネイティブ機能に渡すためのFileオブジェクトを作成
+    const file = new File([vcardString], fileName, { type: 'text/vcard' })
+
+    // 📱 スマホ（Web Share APIが使える端末）の場合の処理
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: '連絡先に追加',
+        })
+        closeMenu()
+        return // 共有メニューが開けたらここで終了
+      } catch (error) {
+        console.log('共有がキャンセルされたか、対応していません:', error)
+        // エラーが起きた場合は下のダウンロード処理へ進む
+      }
+    }
+
+    // 💻 PCなど、共有メニューが出せない場合の予備処理（従来のダウンロード）
+    const blob = new Blob([vcardString], { type: 'text/vcard;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `${employee.name}_連絡先.vcf`
+    link.download = fileName
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
