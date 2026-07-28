@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
-import { db } from './db'; 
 import { useParams } from 'react-router-dom'
 import html2canvas from 'html2canvas'
-import * as XLSX from 'xlsx' // 👈 インストールしたExcelライブラリを読み込む
+import * as XLSX from 'xlsx'
 import './CardView.css'
 
 export default function CardView() {
@@ -13,7 +12,6 @@ export default function CardView() {
   
   const [activeMenu, setActiveMenu] = useState(null)
   const exportCardRef = useRef(null)
-  const [showSaveModal, setShowSaveModal] = useState(false)
 
   useEffect(() => {
     fetch(`https://eco-file-app.onrender.com/api/cards/${id}/`)
@@ -25,33 +23,6 @@ export default function CardView() {
       .catch(err => { setError(String(err.message)); setLoading(false) })
   }, [id])
 
-  // 🔽 名刺をIndexedDBに保存する関数（修正版）
-  const handleSaveCard = async () => {
-    if (!cardData) return;
-
-    // データ構造に合わせて、employee と company を取り出す
-    const { employee } = cardData;
-    const { company } = employee;
-
-    try {
-      // db.cards.put() は、同じuuidがあれば上書き、なければ新規追加してくれます
-      await db.cards.put({
-        uuid: id,                     // 👈 useParams()で取得したURLのUUIDを使用
-        name: employee.name,          // 👈 employeeの中の名前を使用
-        company: company.name,        // 👈 companyの中の会社名を使用
-        savedAt: new Date().toISOString() 
-      });
-      
-      console.log("ブラウザ（IndexedDB）への保存が完了しました！");
-      
-      // 保存成功時にモーダルを開く
-      setShowSaveModal(true);
-      
-    } catch (error) {
-      console.error("名刺の保存に失敗しました:", error);
-    }
-  };
-
   if (loading) return <div style={{textAlign: 'center', padding: '50px'}}>読み込み中...</div>
   if (error) return <div style={{textAlign: 'center', padding: '50px', color: 'red'}}>エラー: {error}</div>
   if (!cardData) return null
@@ -60,6 +31,13 @@ export default function CardView() {
   const { company } = employee
 
   const closeMenu = () => setActiveMenu(null)
+
+  // 💡 LINEに直接送信する関数（ワンタップ保存！）
+  const handleSaveToLine = () => {
+    const text = `📇 名刺を交換しました\n\n${company.name}\n${employee.department} ${employee.role}\n${employee.name}\n\n▼名刺データを開く\n${window.location.href}`;
+    const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`;
+    window.open(lineUrl, '_blank', 'noopener,noreferrer');
+  }
 
   // 1. vCard保存
   const handleDownloadVCard = () => {
@@ -106,11 +84,9 @@ export default function CardView() {
     }, 300)
   }
 
-  // 3. 💡 Excel保存（新規追加）
+  // 3. Excel保存
   const handleDownloadExcel = () => {
     closeMenu()
-    
-    // Excelの1行目（ヘッダー）と2行目（データ）になるオブジェクトを作成
     const excelData = [{
       "会社名": company.name,
       "部署名": employee.department,
@@ -123,22 +99,10 @@ export default function CardView() {
       "事業内容": company.business_description || "",
       "経歴": employee.career_history || ""
     }]
-
-    // データをシートに変換し、ワークブック（Excelファイル本体）を作成
     const worksheet = XLSX.utils.json_to_sheet(excelData)
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, "名刺データ")
-
-    // ファイルとしてダウンロード
     XLSX.writeFile(workbook, `${employee.name}_名刺データ.xlsx`)
-  }
-
-  // 4. URLコピー
-  const handleCopyURL = () => {
-    navigator.clipboard.writeText(window.location.href)
-      .then(() => alert('URLをコピーしました！'))
-      .catch(() => alert('コピーに失敗しました。'))
-    closeMenu()
   }
 
   return (
@@ -165,16 +129,20 @@ export default function CardView() {
 
       {/* メイン画面 */}
       <div className="card-container">
-      <div className="fixed-header">
-        {/* 1. ここに「名刺入れに保存（ワンタップ保存）」を配置！ */}
-        <button className="action-btn highlight-btn" onClick={handleSaveCard}>
-          名刺入れに保存
-        </button>
-        {/* 2. ここに「名刺データ管理（帰ってからゆっくり）」を配置！ */}
-        <button className="action-btn" onClick={() => setActiveMenu('manage')}>
-          データ管理
-        </button>
-      </div>
+        <div className="fixed-header">
+          {/* 💡 変更：LINEカラーのワンタップボタンに変更 */}
+          <button 
+            className="action-btn" 
+            style={{ backgroundColor: '#06C755', boxShadow: '0 4px 6px rgba(6, 199, 85, 0.3)' }}
+            onClick={handleSaveToLine}
+          >
+            <span style={{ marginRight: '5px' }}>💬</span> LINEに保存
+          </button>
+          
+          <button className="action-btn" onClick={() => setActiveMenu('manage')}>
+            データ管理
+          </button>
+        </div>
 
         <div className="content-area">
           <div className="section">
@@ -204,62 +172,25 @@ export default function CardView() {
 
       <div className={`overlay ${activeMenu ? 'show' : ''}`} onClick={closeMenu}></div>
 
-        {/* ドロワーメニュー */}
-        <div className={`bottom-drawer ${activeMenu ? 'show' : ''}`}>
-            {activeMenu === 'manage' && (
-              <>
-                <p className="drawer-title">名刺データ管理</p>
-                <button className="drawer-menu-btn" onClick={handleDownloadVCard}>
-                  <span>👤</span> 連絡先に追加 (vcf)
-                </button>
-                <button className="drawer-menu-btn" onClick={handleDownloadExcel}>
-                  <span>📊</span> 名刺アプリ用 (xlsx)
-                </button>
-                <button className="drawer-menu-btn" onClick={handleSaveImage}>
-                  <span>🖼️</span> 画像として保存 (png)
-                </button>
-              </>
-            )}
-            <button className="drawer-menu-btn cancel" onClick={closeMenu}>キャンセル</button>
-          </div>
-          {/* 👆 ここでドロワーメニューは完全に閉じる */}
+      {/* ドロワーメニュー */}
+      <div className={`bottom-drawer ${activeMenu ? 'show' : ''}`}>
+        {activeMenu === 'manage' && (
+          <>
+            <p className="drawer-title">名刺データ管理</p>
+            <button className="drawer-menu-btn" onClick={handleDownloadVCard}>
+              <span>👤</span> 連絡先に追加 (vcf)
+            </button>
+            <button className="drawer-menu-btn" onClick={handleDownloadExcel}>
+              <span>📊</span> 名刺アプリ用 (xlsx)
+            </button>
+            <button className="drawer-menu-btn" onClick={handleSaveImage}>
+              <span>🖼️</span> 画像として保存 (png)
+            </button>
+          </>
+        )}
+        <button className="drawer-menu-btn cancel" onClick={closeMenu}>キャンセル</button>
+      </div>
 
-
-          {/* 🔽 ⭕️ 正解の場所：ドロワーの外、全体を囲む最後の </div> の直前に置く！ */}
-          {/* 保存完了モーダル（改・保存法のキモ！） */}
-          {showSaveModal && (
-            <div className="custom-modal-overlay">
-              <div className="custom-modal-content">
-                <h2 style={{ color: '#10b981', marginTop: 0 }}>保存完了！</h2>
-                <p>名刺がブラウザに一時保存されました。</p>
-
-                {/* 案内A：ホーム画面追加のガイド */}
-                <div style={{ background: '#f3f4f6', padding: '15px', borderRadius: '8px', margin: '15px 0' }}>
-                  <h4 style={{ margin: '0 0 10px 0' }}>📱 アプリとして使うには？</h4>
-                  <p style={{ fontSize: '12px', margin: 0 }}>
-                    ブラウザのメニューから「ホーム画面に追加」を選ぶと、次回からアイコンをタップするだけで、あなた専用の名刺入れがすぐに開きます。
-                  </p>
-                </div>
-
-                {/* 案内B：LINE Keepへのバックアップ */}
-                <a 
-                  href={`https://line.me/R/msg/text/?${encodeURIComponent(`【名刺】${employee.name}さんの名刺\n${window.location.href}`)}`}
-                  target="_blank" rel="noreferrer"
-                  style={{ display: 'block', background: '#06C755', color: 'white', padding: '12px', borderRadius: '8px', textAlign: 'center', textDecoration: 'none', fontWeight: 'bold', marginBottom: '10px' }}
-                >
-                  LINEのKeepメモに残す
-                </a>
-
-                <button 
-                  onClick={() => setShowSaveModal(false)}
-                  style={{ width: '100%', padding: '12px', background: '#e5e7eb', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-                >
-                  閉じる
-                </button>
-              </div>
-            </div>
-          )}
-
-    </div> /* 👈 これが page-container の最後の閉じタグ */
+    </div>
   )
 }
