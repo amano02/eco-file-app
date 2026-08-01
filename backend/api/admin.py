@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, EmployeeProfile, NFCCard
+from .models import Company, EmployeeProfile, NFCCard,CompanyUser
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
@@ -15,3 +15,8 @@ class EmployeeProfileAdmin(admin.ModelAdmin):
 class NFCCardAdmin(admin.ModelAdmin):
     list_display = ('id', 'employee', 'is_active')
     list_filter = ('is_active',)
+
+@admin.register(CompanyUser)
+class CompanyUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'company')
+    search_fields = ('user__username', 'company__name')

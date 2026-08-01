@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 import uuid
 
 class Company(models.Model):
@@ -12,6 +13,24 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name
+    
+# 担当者ユーザーと会社を紐付けるモデル
+class CompanyUser(models.Model):
+    # Django標準のUserアカウントと1対1で接続
+    user = models.OneToOneField(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='company_profile'
+    )
+    # 担当者が所属する会社（1つの会社に複数担当者OK）
+    company = models.ForeignKey(
+        Company, 
+        on_delete=models.CASCADE, 
+        related_name='managers'
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.company.name}"
 
 class EmployeeProfile(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='employees', verbose_name='所属会社')
